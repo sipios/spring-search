@@ -34,11 +34,12 @@ class QueryVisitorImpl<T>(private val searchSpecAnnotation: SearchSpec) : QueryB
         val key = ctx.key().text
         val op = if (ctx.IS() != null) {
             SearchOperation.IS
-        } else {
+        } else if (ctx.IS_NOT() != null) {
             SearchOperation.IS_NOT
+        } else {
+            throw IllegalArgumentException("Invalid operation")
         }
-        val value = ctx.is_value!!.text
-        return toSpec(key, op, value)
+        return toSpec(key, op, ctx.is_value().text)
     }
 
     override fun visitEqArrayCriteria(ctx: QueryParser.EqArrayCriteriaContext): Specification<T> {
